@@ -1,0 +1,64 @@
+{
+  "variables": {
+    "hostname": "ubuntu",
+    "domain": "local",
+    "ssh_user": "ubuntu",
+    "ssh_pass": "ubuntu"
+  },
+  "builders":
+  [
+    {
+      "type": "qemu",
+      "iso_url": "http://cdimage.ubuntu.com/ubuntu-server/bionic/daily/current/bionic-server-amd64.iso",
+      "iso_checksum": "cb7cd5a0c94899a04a536441c8b6d2bf",
+      "iso_checksum_type": "md5",
+      "output_directory": "output_ubuntu",
+      "shutdown_command": "echo 'ubuntu' | sudo -S /sbin/halt -p",
+      "disk_size": 10000,
+      "format": "qcow2",
+      "accelerator": "kvm",
+      "http_directory": "preseed_http",
+      "ssh_username": "{{ user `ssh_user` }}",
+      "ssh_password": "{{ user `ssh_pass` }}",
+      "ssh_timeout": "20m",
+      "vm_name": "ubuntu_template",
+      "net_device": "virtio-net",
+      "disk_interface": "virtio",
+      "boot_wait": "10s",
+      "boot_command": [
+            "<enter><wait><f6><esc><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+            "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+            "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+            "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+            "/install/vmlinuz<wait>",
+            " auto<wait>",
+            " console-setup/ask_detect=false<wait>",
+            " console-setup/layoutcode=us<wait>",
+            " console-setup/modelcode=pc105<wait>",
+            " debconf/frontend=noninteractive<wait>",
+            " debian-installer=en_US<wait>",
+            " fb=false<wait>",
+            " initrd=/install/initrd.gz<wait>",
+            " kbd-chooser/method=us<wait>",
+            " keyboard-configuration/layout=USA<wait>",
+            " keyboard-configuration/variant=USA<wait>",
+            " locale=en_US<wait>",
+            " netcfg/get_domain={{user `domain`}}<wait>",
+            " netcfg/get_hostname={{user `hostname`}}<wait>",
+            " grub-installer/bootdev=/dev/sda<wait>",
+            " noapic<wait>",
+            " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg",
+            " -- <wait>",
+            "<enter><wait>"
+      ]
+    }
+  ],
+  "provisioners": [{
+      "type": "shell",
+      "inline": [
+          "sleep 30",
+          "echo 'ubuntu' | sudo -S apt update",
+          "echo 'ubuntu' | sudo -S apt -y install bash-completion wget vim apache2"
+      ]
+  }]
+}
