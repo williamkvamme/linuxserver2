@@ -58,7 +58,7 @@
       "inline": [
           "sleep 30",
           "echo 'ubuntu' | sudo -S apt update",
-          "echo 'ubuntu' | sudo -S apt -y install bash-completion wget vim apache2"
+          "echo 'ubuntu' | sudo -S apt -y install bash-completion wget vim"
       ]
   }]
 }
